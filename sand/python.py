@@ -1,11 +1,13 @@
 
+# Load the "Lazega" graph into Python from the SAND book.
+
 import igraph as ig
 import pandas as pd
 
 
 # Created in R via:
 # > write.table(elist.lazega,row.names=FALSE,sep=" ",quote=FALSE,
-#   file="elist_lazega.ncol")
+#   col.names=FALSE, file="elist_lazega.ncol")
 g = ig.Graph.Read_Ncol("elist_lazega.ncol",weights="if_present",
     directed=False)
 

@@ -24,6 +24,8 @@ def load_graph(name, directed=False, plot=False):
 
     if plot:
         plot_graph(name)
+
+    return g
     
 
 def plot_graph(name):

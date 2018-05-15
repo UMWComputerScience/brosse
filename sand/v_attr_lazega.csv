@@ -1,4 +1,4 @@
-"Name","Seniority","Status","Gender","Office","Years","Age","Practice","School"
+"name","Seniority","Status","Gender","Office","Years","Age","Practice","School"
 "V1",1,1,1,1,31,64,1,1
 "V2",2,1,1,1,32,62,2,1
 "V3",3,1,1,2,13,67,1,1

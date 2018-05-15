@@ -6,12 +6,21 @@ import pandas as pd
 
 
 # Created in R via:
-# > write.table(elist.lazega,row.names=FALSE,sep=" ",quote=FALSE,
+# > library(igraph)
+# > library(sand)
+# > write.table(get.edgelist(lazega),row.names=FALSE,sep=" ",quote=FALSE,
 #   col.names=FALSE, file="elist_lazega.ncol")
 g = ig.Graph.Read_Ncol("elist_lazega.ncol",weights="if_present",
     directed=False)
 
 # Created in R via:
+#   attrs <- list.vertex.attributes(lazega)
+#   cols <- vector("list", length(attrs))
+#   for (i in 1:length(cols)) {
+#       cols[[i]] <- get.vertex.attribute(lazega,attrs[i])
+#   }
+#   v.attr.lazega <- data.frame(cols)
+#   names(v.attr.lazega) <- list.vertex.attributes(lazega)
 # > write.csv(v.attr.lazega,row.names=FALSE,file="v_attr_lazega.csv")
 # (Note: in order to work, this very much depends on the vertices appearing
 #   in the .ncol file in the same order as they appear in the .csv file!)

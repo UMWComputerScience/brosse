@@ -10,9 +10,10 @@ def load_graph(name, directed=False, plot=False):
     g = ig.Graph.Read_Ncol("elist_"+name+".ncol",weights="if_present",
         directed=directed)
 
-    v_attr_df = pd.read_csv("v_attr_"+name+".csv")
-    for col in v_attr_df.columns[1:]:
-        g.vs[col] = v_attr_df[col]
+    if Path("v_attr_"+name+".csv").exists():
+        v_attr_df = pd.read_csv("v_attr_"+name+".csv")
+        for col in v_attr_df.columns[1:]:
+            g.vs[col] = v_attr_df[col]
 
     if Path("e_attr_"+name+".csv").exists():
         e_attr_df = pd.read_csv("e_attr_"+name+".csv")
@@ -42,3 +43,4 @@ if __name__ == "__main__":
     load_graph("yeast")
     load_graph("lazega", plot=True)
     load_graph("karate", plot=True)
+    load_graph("aidsblog", directed=True, plot=True)

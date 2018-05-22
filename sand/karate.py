@@ -3,6 +3,7 @@
 #Hello World
 import igraph as ig
 import pandas as pd
+import numpy as np
 import math
 
 # Created in R via:
@@ -41,10 +42,19 @@ style = {'margin':70}
 g.vs['shape'] = 'circle'
 g.vs.find('MrHi')['shape'] = 'rectangle'
 g.vs.find('JohnA')['shape'] = 'rectangle'
+
+vertex_sizes = [math.sqrt(30*deg) for deg in g.vs.degree()]
+vertex_sizes[g.vs.find('JohnA').index] = 50
+vertex_sizes[g.vs.find('MrHi').index] = 50
+g.vs['size'] = vertex_sizes
+offsets = [ 0 for thing in g.vs() ]
+for x in g.vs.select(size_le=19):
+    offsets[x.index] = 3
+
 ig.plot(g,"aplot.pdf",
     vertex_label=g.vs['name'],
-    vertex_size= [3*deg/g.strength for deg in g.vs.degree()],
-    vertex_label_dist=[0 for d in g.vs if g.vs.select(name_eq='MrHi')],
+    vertex_size= vertex_sizes,
+    vertex_label_dist=offsets,
     layout=g.layout("kk"),
     **style)
 

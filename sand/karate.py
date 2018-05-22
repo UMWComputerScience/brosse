@@ -13,8 +13,10 @@ import math
 # data(karate)
 # V(karate)$name <- str_replace(V(karate)$name," ","")
 # V(karate)$name <- str_replace(V(karate)$name,"Actor","")
-# write.table(get.edgelist(karate),row.names=FALSE,sep=" ",quote=FALSE,
-#   col.names=FALSE,file="elist_karate.ncol")
+# el <- get.edgelist(karate)
+# el <- cbind(el, E(karate)$weight)
+# write.table(el,row.names=FALSE,sep=" ",quote=FALSE,col.names=FALSE,
+#   file="elist_karate.ncol")
 g = ig.Graph.Read_Ncol("elist_karate.ncol",weights="if_present",
     directed=False)
 

@@ -3,7 +3,7 @@
 #Hello World
 import igraph as ig
 import pandas as pd
-
+import math
 
 # Created in R via:
 # library(igraph)
@@ -32,13 +32,19 @@ g = ig.Graph.Read_Ncol("elist_karate.ncol",weights="if_present",
 v_attr_df = pd.read_csv("v_attr_karate.csv")
 for col in v_attr_df.columns[1:]:
     g.vs[col] = v_attr_df[col]
-
-
+#%%
+dubs = []
+for i in g.vs.degree():
+    i = 5*(math.sqrt(i))
+    dubs.append(i)
 style = {'margin':70}
+g.vs['shape'] = 'circle'
+g.vs.find('MrHi')['shape'] = 'rectangle'
+g.vs.find('JohnA')['shape'] = 'rectangle'
 ig.plot(g,"aplot.pdf",
     vertex_label=g.vs['name'],
-    vertex_size=18,
-    vertex_label_dist=2,
+    vertex_size= [3*deg/g.strength for deg in g.vs.degree()],
+    vertex_label_dist=[0 for d in g.vs if g.vs.select(name_eq='MrHi')],
     layout=g.layout("kk"),
     **style)
 

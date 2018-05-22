@@ -43,7 +43,7 @@ g.vs.find('MrHi')['shape'] = 'rectangle'
 g.vs.find('JohnA')['shape'] = 'rectangle'
 ig.plot(g,"aplot.pdf",
     vertex_label=g.vs['name'],
-    vertex_size= [3*deg/g.strength for deg in g.vs.degree()],
+    vertex_size= [3*deg for deg in g.vs.degree()],
     vertex_label_dist=[0 for d in g.vs if g.vs.select(name_eq='MrHi')],
     layout=g.layout("kk"),
     **style)

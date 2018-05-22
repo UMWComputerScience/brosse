@@ -3,6 +3,7 @@
 #Hello World
 import igraph as ig
 import pandas as pd
+import numpy as np
 import math
 
 # Created in R via:
@@ -12,8 +13,10 @@ import math
 # data(karate)
 # V(karate)$name <- str_replace(V(karate)$name," ","")
 # V(karate)$name <- str_replace(V(karate)$name,"Actor","")
-# write.table(get.edgelist(karate),row.names=FALSE,sep=" ",quote=FALSE,
-#   col.names=FALSE,file="elist_karate.ncol")
+# el <- get.edgelist(karate)
+# el <- cbind(el, E(karate)$weight)
+# write.table(el,row.names=FALSE,sep=" ",quote=FALSE,col.names=FALSE,
+#   file="elist_karate.ncol")
 g = ig.Graph.Read_Ncol("elist_karate.ncol",weights="if_present",
     directed=False)
 
@@ -32,19 +35,24 @@ g = ig.Graph.Read_Ncol("elist_karate.ncol",weights="if_present",
 v_attr_df = pd.read_csv("v_attr_karate.csv")
 for col in v_attr_df.columns[1:]:
     g.vs[col] = v_attr_df[col]
-#%%
-dubs = []
-for i in g.vs.degree():
-    i = 5*(math.sqrt(i))
-    dubs.append(i)
+    
+for node in g.vs():
+    strength = sum(g.incident(node))
+    node['strength'] = strength
 style = {'margin':70}
 g.vs['shape'] = 'circle'
 g.vs.find('MrHi')['shape'] = 'rectangle'
 g.vs.find('JohnA')['shape'] = 'rectangle'
+vertex_sizes = [3*(math.sqrt(deg)) for deg in g.vs['strength']]
+g.vs['size'] = 15*(np.sqrt(g.vs['strength']))
+offsets = [ 0 for thing in g.vs() ]
+for x in g.vs.select(size_le=19):
+    offsets[x.index] = 3
+g.es['width'] = g.es['weight']
 ig.plot(g,"aplot.pdf",
     vertex_label=g.vs['name'],
-    vertex_size= [3*deg for deg in g.vs.degree()],
-    vertex_label_dist=[0 for d in g.vs if g.vs.select(name_eq='MrHi')],
+    vertex_size = vertex_sizes,
+    vertex_label_dist=offsets,
     layout=g.layout("kk"),
     **style)
 

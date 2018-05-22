@@ -1,78 +1,78 @@
-MrHi 2
-MrHi 3
-MrHi 4
-MrHi 5
-MrHi 6
-MrHi 7
-MrHi 8
-MrHi 9
-MrHi 11
-MrHi 12
-MrHi 13
-MrHi 14
-MrHi 18
-MrHi 20
-MrHi 22
-MrHi 32
-2 3
-2 4
-2 8
-2 14
-2 18
-2 20
-2 22
-2 31
-3 4
-3 8
-3 9
-3 10
-3 14
-3 28
-3 29
-3 33
-4 8
-4 13
-4 14
-5 7
-5 11
-6 7
-6 11
-6 17
-7 17
-9 31
-9 33
-9 JohnA
-10 JohnA
-14 JohnA
-15 33
-15 JohnA
-16 33
-16 JohnA
-19 33
-19 JohnA
-20 JohnA
-21 33
-21 JohnA
-23 33
-23 JohnA
-24 26
-24 28
-24 30
-24 33
-24 JohnA
-25 26
-25 28
-25 32
-26 32
-27 30
-27 JohnA
-28 JohnA
-29 32
-29 JohnA
-30 33
-30 JohnA
-31 33
-31 JohnA
-32 33
-32 JohnA
-33 JohnA
+MrHi 2 4
+MrHi 3 5
+MrHi 4 3
+MrHi 5 3
+MrHi 6 3
+MrHi 7 3
+MrHi 8 2
+MrHi 9 2
+MrHi 11 2
+MrHi 12 3
+MrHi 13 1
+MrHi 14 3
+MrHi 18 2
+MrHi 20 2
+MrHi 22 2
+MrHi 32 2
+2 3 6
+2 4 3
+2 8 4
+2 14 5
+2 18 1
+2 20 2
+2 22 2
+2 31 2
+3 4 3
+3 8 4
+3 9 5
+3 10 1
+3 14 3
+3 28 2
+3 29 2
+3 33 2
+4 8 3
+4 13 3
+4 14 3
+5 7 2
+5 11 3
+6 7 5
+6 11 3
+6 17 3
+7 17 3
+9 31 3
+9 33 3
+9 JohnA 4
+10 JohnA 2
+14 JohnA 3
+15 33 3
+15 JohnA 2
+16 33 3
+16 JohnA 4
+19 33 1
+19 JohnA 2
+20 JohnA 1
+21 33 3
+21 JohnA 1
+23 33 2
+23 JohnA 3
+24 26 5
+24 28 4
+24 30 3
+24 33 5
+24 JohnA 4
+25 26 2
+25 28 3
+25 32 2
+26 32 7
+27 30 4
+27 JohnA 2
+28 JohnA 4
+29 32 2
+29 JohnA 2
+30 33 4
+30 JohnA 2
+31 33 3
+31 JohnA 3
+32 33 4
+32 JohnA 4
+33 JohnA 5

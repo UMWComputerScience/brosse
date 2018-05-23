@@ -35,3 +35,23 @@ ig.plot(scenes,"scenes.pdf",
     vertex_label_dist=2,
     layout=scenes.layout("kk"),
     **style)
+#%%
+
+top_chars = []
+topchars_deg = []
+for name in characters['char']:
+    topchars_deg.append(scenes.vs.find(name).degree())
+    top_chars.append(scenes.vs.find(name)['name'])
+top_chars_deg = zip(topchars_deg, top_chars)
+
+top_chars_deg = sorted(top_chars_deg, reverse=True)
+for x,y in list(top_chars_deg[:5]):
+    print(y + " appeared in " + str(x) + " scenes.")
+
+pairs = scenes.get_edgelist()
+sub = scenes.subgraph([2,9])
+scenes.vs['name']
+ig.plot(sub, "sub.pdf", vertex_label=scenes.vs['name'])
+scenes.es['weight'] = 1
+sg = scenes.simplify(combine_edges=dict(weight=sum))
+print(sg.es['weight'])

@@ -89,6 +89,7 @@ print("---------------------------")
 
 #%%
 
+# 1.3
 topchars_deg = []
 top_chars_deg = []
 top_chars = []
@@ -102,6 +103,7 @@ for x, y in list(top_chars_deg[:5]):
     print(y + " appeared with " + str(x) + " characters.")
 print("-------------------------------------")
 
+# II
 
 
 

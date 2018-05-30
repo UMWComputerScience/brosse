@@ -25,8 +25,6 @@ scenes_df = pd.read_csv("scenes.csv")
 for row in scenes_df.itertuples(index=False):
     scenes.add_edge(row.char1, row.char2, color=colors[row.ep])
 
-
-
 style = {'margin':40}
 ig.plot(scenes,"scenes.pdf",
     vertex_label=scenes.vs['name'],
@@ -47,11 +45,65 @@ top_chars_deg = zip(topchars_deg, top_chars)
 top_chars_deg = sorted(top_chars_deg, reverse=True)
 for x,y in list(top_chars_deg[:5]):
     print(y + " appeared in " + str(x) + " scenes.")
-
+print("-------------------------------------")
 pairs = scenes.get_edgelist()
-sub = scenes.subgraph([2,9])
-scenes.vs['name']
-ig.plot(sub, "sub.pdf", vertex_label=scenes.vs['name'])
+#sub = scenes.subgraph([2,9])
+#ig.plot(sub, "sub.pdf", vertex_label=scenes.vs['name'])
 scenes.es['weight'] = 1
 sg = scenes.simplify(combine_edges=dict(weight=sum))
-print(sg.es['weight'])
+#print(sg.es['weight'])
+weights = sg.es['weight']
+indmax = weights.index(max(weights))
+bigedge = sg.es[indmax]
+bryce = zip(weights, range(len(weights)))
+bryce = sorted(bryce, reverse=True)
+for x,y in bryce[0:5]:
+    print(sg.vs[sg.es[y].source]['name'] + " & " + sg.vs[sg.es[y].target]['name'] + " appeared in " + str(sg.vs[sg.es[y].target].degree()) + " scenes together.")
+alien = sg.vs.select(color='green')
+human = sg.vs.select(color='blue')
+humanalien = sg.es.select(_between=(alien, alien))
+
+#%%
+#Episode III
+cliqcount = []
+group = []
+clicks = scenes.cliques()
+for i in range(len(clicks)):
+    cliqcount.append(len(clicks[i]))
+    group.append(clicks[i])
+cliqdf = pd.DataFrame({"size":cliqcount, "nodes":group})
+bigscene = scenes.vs[cliqdf.iloc[-1]['nodes']]['name']
+for name in bigscene:
+    print(name + ",", end=" ")
+print("were all in one scenes together! That's " + str(cliqdf.iloc[-1]['size']) + " actors.")
+print("---------------------------")
+
+#%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#ig.plot(jedi_scenes, "jedi_scenes.pdf", vertex_label=jedi_scenes.vs['name'], vertex_label_dist=-2)

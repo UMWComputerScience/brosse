@@ -34,7 +34,7 @@ ig.plot(scenes,"scenes.pdf",
     layout=scenes.layout("kk"),
     **style)
 #%%
-
+#Episode I
 top_chars = []
 topchars_deg = []
 for name in characters['char']:
@@ -68,28 +68,10 @@ bryce = zip(weights, range(len(weights)))
 bryce = sorted(bryce, reverse=True)
 for x,y in bryce[0:5]:
     print(sg.vs[sg.es[y].source]['name'] + " & " + sg.vs[sg.es[y].target]['name'] + " appeared in " + str(sg.vs[sg.es[y].target].degree()) + " scenes together.")
-alien = sg.vs.select(color='green')
-human = sg.vs.select(color='blue')
-humanalien = sg.es.select(_between=(alien, alien))
+#alien = sg.vs.select(color='green')
+#human = sg.vs.select(color='blue')
+#humanalien = sg.es.select(_between=(alien, alien))
 
-#%%
-#Episode III
-cliqcount = []
-group = []
-clicks = scenes.cliques()
-for i in range(len(clicks)):
-    cliqcount.append(len(clicks[i]))
-    group.append(clicks[i])
-cliqdf = pd.DataFrame({"size":cliqcount, "nodes":group})
-bigscene = scenes.vs[cliqdf.iloc[-1]['nodes']]['name']
-for name in bigscene:
-    print(name + ",", end=" ")
-print("were all in one scenes together! That's " + str(cliqdf.iloc[-1]['size']) + " actors.")
-print("---------------------------")
-
-#%%
-
-# 1.3
 topchars_deg = []
 top_chars_deg = []
 top_chars = []
@@ -102,32 +84,78 @@ top_chars_deg = sorted(top_chars_deg, reverse=True)
 for x, y in list(top_chars_deg[:5]):
     print(y + " appeared with " + str(x) + " characters.")
 print("-------------------------------------")
-
-# II
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#ig.plot(jedi_scenes, "jedi_scenes.pdf", vertex_label=jedi_scenes.vs['name'], vertex_label_dist=-2)
+#%%
+#Episode II
+#Union deletes vertex attributes
+jedi_scenes = scenes.induced_subgraph(["Vader", "Luke", "Yoda", "Emperor", "Obiwan"])
+#goodguy_scenes = scenes.induced_subgraph(["Leia", "Luke", "Han", "Obiwan", "Yoda", "Lando"])
+#wierd_alien_scenes = scenes.induced_subgraph(["Greedo","Chewie","Walrusman","Jabba","Ackbar","NienNunb"])
+#jedi_plus_goodguy_scenes = jedi_scenes.union([goodguy_scenes])
+#ig.plot(jedi_scenes, "jedi_plus_goodguy_scenes.pdf", vertex_label=jedi_scenes.vs['name'])
+#%%
+#Episode III
+#3.1
+cliqcount = []
+group = []
+clicks = scenes.cliques()
+for i in range(len(clicks)):
+    cliqcount.append(len(clicks[i]))
+    group.append(clicks[i])
+cliqdf = pd.DataFrame({"size":cliqcount, "nodes":group})
+bigscene = scenes.vs[cliqdf.iloc[-1]['nodes']]['name']
+for name in bigscene:
+    print(name + ",", end=" ")
+print("were all in one scenes together! That's " + str(cliqdf.iloc[-1]['size']) + " actors.")
+print("---------------------------")
+#3.2
+names = list(characters['char'])
+transitivity = list(scenes.transitivity_local_undirected(vertices=names))
+ziptrans = zip(transitivity, names)
+ziptrans = sorted(ziptrans, reverse=True)
+for x,y in list(ziptrans):
+    print(str(y) + " " + str(x))
+print("Seems to be a correlation with amount of scenes with different characters")
+#3.3
+artic = scenes.cut_vertices()
+print("Vader and Han connect the main component to Jared and Greedo respectvely")
+#%%
+jedi_decomp = jedi_scenes.decompose()
+scenes_decomp = scenes.decompose()
+for i in jedi_decomp:
+    print(i)
+print("\n" )
+for j in scenes_decomp:
+    print(j)
+print("Scenes diameter", scenes.diameter())
+print("Jedi diameter", jedi_scenes.diameter())
+print('Closeness')
+closeness = scenes.closeness()
+zipclose = zip(closeness, names)
+zipclose = sorted(zipclose, reverse=True)
+for x,y in list(zipclose[:5]):
+    print(str(y) + " " + str(x))
+print('Betweenness')
+betweenness = scenes.betweenness()
+zipbetween = zip(betweenness, names)
+zipbetween = sorted(zipbetween, reverse=True)
+for x,y in list(zipbetween[:5]):
+    print(str(y) + " " + str(x))
+print('Eigenvector Centrality')
+eigenvector_central = scenes.eigenvector_centrality()
+zipeigen = zip(eigenvector_central, names)
+zipeigen = sorted(zipeigen, reverse=True)
+for x,y in list(zipeigen[:5]):
+    print(str(y) + " " + str(x))
+    
+communities = scenes.community_fastgreedy()
+ig.plot(communities, "com.pdf")
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

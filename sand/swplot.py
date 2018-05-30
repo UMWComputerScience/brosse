@@ -43,7 +43,7 @@ for name in characters['char']:
 top_chars_deg = zip(topchars_deg, top_chars)
 
 top_chars_deg = sorted(top_chars_deg, reverse=True)
-for x,y in list(top_chars_deg[:5]):
+for x, y in list(top_chars_deg[:5]):
     print(y + " appeared in " + str(x) + " scenes.")
 print("-------------------------------------")
 pairs = scenes.get_edgelist()
@@ -51,6 +51,15 @@ pairs = scenes.get_edgelist()
 #ig.plot(sub, "sub.pdf", vertex_label=scenes.vs['name'])
 scenes.es['weight'] = 1
 sg = scenes.simplify(combine_edges=dict(weight=sum))
+
+ig.plot(sg,"scenes_simple.pdf",
+    vertex_label=scenes.vs['name'],
+    vertex_color=scenes.vs['color'],
+    vertex_size=18,
+    vertex_label_dist=2,
+    layout=scenes.layout("kk"),
+    **style)
+
 #print(sg.es['weight'])
 weights = sg.es['weight']
 indmax = weights.index(max(weights))
@@ -79,6 +88,19 @@ print("were all in one scenes together! That's " + str(cliqdf.iloc[-1]['size']) 
 print("---------------------------")
 
 #%%
+
+topchars_deg = []
+top_chars_deg = []
+top_chars = []
+for name in characters['char']:
+    topchars_deg.append(sg.vs.find(name).degree())
+    top_chars.append(sg.vs.find(name)['name'])
+top_chars_deg = zip(topchars_deg, top_chars)
+
+top_chars_deg = sorted(top_chars_deg, reverse=True)
+for x, y in list(top_chars_deg[:5]):
+    print(y + " appeared with " + str(x) + " characters.")
+print("-------------------------------------")
 
 
 

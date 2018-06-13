@@ -8,7 +8,6 @@ Created on Wed Jun  6 14:34:15 2018
 
 import nltk
 from nltk.corpus import stopwords
-import os
 from collections import Counter
 from nltk.corpus import PlaintextCorpusReader
 import operator
@@ -25,6 +24,7 @@ def update_stopwords(aset):
     aset.add("im")
     return aset
 stopwords = update_stopwords(stopwords)
+#Make this more sexy
 def prettify(string):
     string = string.replace(",","")
     string = string.replace("'","")
@@ -42,41 +42,7 @@ def prettify(string):
     string = string.replace('\'',"")
     string = string.lower()
     return string
-#Tokenizes and orders words based on frequency
-def prep(string, stopwords):
-    zipwords = []
-    tokens = nltk.word_tokenize(string)
-    tokens = nltk.Text(tokens)
-    filtered_tokens = []
-    for w in tokens:
-        if w not in stopwords:
-            filtered_tokens.append(w)
-        allwords = nltk.FreqDist(w.lower() for w in filtered_tokens)
-        wds = list(allwords.keys())
-        vals = list(allwords.values())
-        zipwords = zip(vals, wds)
-        zipwords = sorted(zipwords, reverse=True)
-    return zipwords
-def readlyrics(genre, emptylist):
-    song = ""
-    for rock, dirs, files in os.walk("/Users/bryceanderson/Desktop/brosse/classifying"):
-        for f in files:
-            if genre in f:
-                emptylist.append(f)
-        for file in emptylist:
-            with open(file, 'r') as q:
-                song += q.read()
-    return song
-def cleanSet(aset):
-    badwords = []
-    temp = aset
-    for word in aset:
-        if word in stopwords:
-            badwords.append(word)
-    print(badwords)
-    for word in badwords:
-        temp.remove(word)
-    return temp
+
 #%%
 #doc = open('raplyrics.txt','r')
 #rockdoc = open('rocklyrics.txt','r')
@@ -118,12 +84,4 @@ featuresets += [(song_features(r), 'rock') for r in rockText]
 random.shuffle(featuresets)
 ntrain = int(len(featuresets) * .7)
 trainset, testest = featuresets[:ntrain], featuresets[ntrain:]
-classifie = nltk.NaiveBayesClassifier.train(trainset)
-
-
-
-
-
-
-
-
+rapOrRock = nltk.NaiveBayesClassifier.train(trainset)

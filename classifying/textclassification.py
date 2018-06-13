@@ -55,16 +55,6 @@ def prep(string, stopwords):
         zipwords = zip(vals, wds)
         zipwords = sorted(zipwords, reverse=True)
     return zipwords
-#%%
-#doc = open('raplyrics.txt','r')
-#rockdoc = open('rocklyrics.txt','r')
-#raw=doc.read()
-#rockraw = rockdoc.read()
-#raw = prettify(raw)
-#rockraw = prettify(rockraw)
-#rapfreq = prep(raw, stopwords)
-#rockfreq = prep(rockraw, stopwords)
-#Create a corpus for each genre
 def readlyrics(genre, emptylist):
     song = ""
     for rock, dirs, files in os.walk("/Users/bryceanderson/Desktop/brosse/classifying"):
@@ -75,6 +65,30 @@ def readlyrics(genre, emptylist):
             with open(file, 'r') as q:
                 song += q.read()
     return song
+#%%
+#doc = open('raplyrics.txt','r')
+#rockdoc = open('rocklyrics.txt','r')
+#raw=doc.read()
+#rockraw = rockdoc.read()
+#raw = prettify(raw)
+#rockraw = prettify(rockraw)
+#rapfreq = prep(raw, stopwords)
+#rockfreq = prep(rockraw, stopwords)
+#Clean set of corpus words
+rapWords = set(rapCorpus.words())
+rockWords = set(rockCorpus.words())
+def cleanSet(aset):
+    badwords = []
+    temp = aset
+    for word in aset:
+        if word in stopwords:
+            badwords.append(word)
+    print(badwords)
+    for word in badwords:
+        temp.remove(word)
+    return temp
+rapWords = cleanSet(rapWords)
+rockWords = cleanSet(rockWords)
 rap_files, r_files = [], []
 raps = readlyrics('rap', rap_files)
 rap_text = readlyrics('rap', r_files)

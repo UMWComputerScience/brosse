@@ -44,16 +44,7 @@ def prettify(string):
     return string
 
 #%%
-#doc = open('raplyrics.txt','r')
-#rockdoc = open('rocklyrics.txt','r')
-#raw=doc.read()
-#rockraw = rockdoc.read()
-#raw = prettify(raw)
-#rockraw = prettify(rockraw)
-#rapfreq = prep(raw, stopwords)
-#rockfreq = prep(rockraw, stopwords)
-#Want a list of strings containing the lyrics to each song (by genre)
-#Want a list of Text objects that contain each song (by genre)
+
 def getLyrics(Corpus):
     lyrics = []
     text = []
@@ -68,13 +59,13 @@ rapLyrics, rapText = getLyrics(rapCorpus)
 rockLyrics, rockText = getLyrics(rockCorpus)
 allWords = Counter(nltk.word_tokenize(" ".join(rapLyrics))) + Counter(nltk.word_tokenize(" ".join(rockLyrics)))
 sortVocab = sorted(allWords.items(), reverse=True, key=operator.itemgetter(1))
-word_features = list(sortVocab)[:100]
+words_features = list(sortVocab)[:100]
 
 # For every word in the features list check to see if it exist in the song label (True || False)w
 def song_features(text):
     words = set(text)
     features = {}
-    for word in word_features:
+    for word in words_features:
         features["has({})".format(word[0])] = [word[0] in words]
     return features
 
@@ -84,4 +75,4 @@ featuresets += [(song_features(r), 'rock') for r in rockText]
 random.shuffle(featuresets)
 ntrain = int(len(featuresets) * .7)
 trainset, testest = featuresets[:ntrain], featuresets[ntrain:]
-rapOrRock = nltk.NaiveBayesClassifier.train(trainset)
+#rapOrRock = nltk.NaiveBayesClassifier.train(trainset)

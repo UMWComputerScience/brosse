@@ -5,7 +5,6 @@
 
 import nltk
 import operator
-from collections import Counter
 import random
 import sys
 import os
@@ -27,13 +26,13 @@ def compile_texts(screenname):
             screenname))
     with open("{}.tweets".format(screenname),"r") as f:
         tweets = f.readlines()
-        texts = [ nltk.Text(nltk.word_tokenize(t.lower())) for t in tweets ]
+        texts = [ nltk.word_tokenize(t.lower()) for t in tweets ]
     return tweets, texts
 
 tweets0, texts0 = compile_texts(screennames[0])
 tweets1, texts1 = compile_texts(screennames[1])
-all_vocab = Counter(nltk.word_tokenize(' '.join(tweets0))) + \
-            Counter(nltk.word_tokenize(' '.join(tweets1)))
+all_vocab = nltk.FreqDist(nltk.word_tokenize(' '.join(tweets0))) + \
+            nltk.FreqDist(nltk.word_tokenize(' '.join(tweets1)))
 sorted_words = sorted(all_vocab.items(), reverse=True, 
     key=operator.itemgetter(1))
 word_features = list(sorted_words)[:NUM_FEATURES_TO_RETAIN]
@@ -58,8 +57,8 @@ classifier.show_most_informative_features(NUM_MOST_INFO)
 
 tweet = input("\nEnter a sample tweet ('done' to quit): ")
 while tweet not in ["done","'done'"]:
-    probs = classifier.prob_classify(tweet_features(nltk.Text(
-        nltk.word_tokenize(tweet.lower()))))
+    probs = classifier.prob_classify(tweet_features(
+        nltk.word_tokenize(tweet.lower())))
     for sn in screennames:
         print("@{} probability: {:.3f}%".format(sn,100 * probs.prob(sn)))
     tweet = input("\nEnter a sample tweet: ")

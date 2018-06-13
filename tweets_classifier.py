@@ -8,6 +8,8 @@ import operator
 import random
 import sys
 import os
+import re
+import string
 
 PROPORTION_TRAINING = .7      # Proportion of set to train on
 NUM_FEATURES_TO_RETAIN = 200  # We'll use only this many most common words
@@ -26,13 +28,15 @@ def compile_texts(screenname):
             screenname))
     with open("{}.tweets".format(screenname),"r") as f:
         tweets = f.readlines()
-        texts = [ nltk.word_tokenize(t.lower()) for t in tweets ]
-    return tweets, texts
+        texts = [ nltk.word_tokenize(
+            re.sub('['+string.punctuation+']','',t.lower())) for t in tweets ]
+    return texts
 
-tweets0, texts0 = compile_texts(screennames[0])
-tweets1, texts1 = compile_texts(screennames[1])
-all_vocab = nltk.FreqDist(nltk.word_tokenize(' '.join(tweets0))) + \
-            nltk.FreqDist(nltk.word_tokenize(' '.join(tweets1)))
+texts0 = compile_texts(screennames[0])
+texts1 = compile_texts(screennames[1])
+texts = texts0.copy()
+texts.extend(texts1)
+all_vocab = nltk.FreqDist([ word for text in texts for word in text ])
 sorted_words = sorted(all_vocab.items(), reverse=True, 
     key=operator.itemgetter(1))
 word_features = list(sorted_words)[:NUM_FEATURES_TO_RETAIN]

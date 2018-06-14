@@ -66,7 +66,7 @@ def song_features(text):
     words = set(text)
     features = {}
     for word in words_features:
-        features["has({})".format(word[0])] = [word[0] in words]
+        features["has({})".format(word[0])] = (word[0] in words)
     return features
 
 # For every song in ___Text run song_features and create a tuple with those features
@@ -74,5 +74,11 @@ featuresets = [(song_features(r), 'rap') for r in rapText]
 featuresets += [(song_features(r), 'rock') for r in rockText]
 random.shuffle(featuresets)
 ntrain = int(len(featuresets) * .7)
-trainset, testest = featuresets[:ntrain], featuresets[ntrain:]
-#rapOrRock = nltk.NaiveBayesClassifier.train(trainset)
+trainset, testset = featuresets[:ntrain], featuresets[ntrain:]
+rapOrRock = nltk.NaiveBayesClassifier.train(trainset)
+#rapOrRock.show_most_informative_features(20)
+probs = []
+for item in testset:
+    probs.append("Rap: "+ str(rapOrRock.prob_classify(item[0]).prob('rap'))+ " Rock: " + str(rapOrRock.prob_classify(item[0]).prob('rock')))
+
+

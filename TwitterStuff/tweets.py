@@ -9,19 +9,17 @@ Created on Tue Jun 19 13:50:23 2018
 from requests_oauthlib import OAuth1
 import requests
 import json
-
-CKEY = "9XINgUNhR5RbNWv9HA6goMrFP"
-CSECRET = "rASBq7XOtra7eUV5pKaguXZWDrLvX1nwGAbcMpXPdDj70Z7JRz"
-TOKEN = "779402207057760257-BWVmaSHepbGFkh5CEQ4LcLyxBmapbAL"
-ASECRET = "UnjMCePkYGIsMFgYZeYaLDkslCewFAok9ZXnrlNqdsASL"
-
+#%%
+CKEY = "bOBSVsmIyfocAJkMYKMw6p2zO"
+CSECRET = "Oh9nbfQhPkYkm8J7pR972L68JjrqAPS3WdGUyQ4CUdPRmnRPwW"
+TOKEN = "779402207057760257-dG6x21WPk3AQUUg8cR9mJdajTBL1Oqd"
+ASECRET = "PBtJVfknEOFqR19G36epwn9JxCmqxckF8A01T2Vhk3zev"
+counter = 0
 oauth = OAuth1(CKEY, CSECRET, TOKEN, ASECRET)
 
-members = requests.get("https://api.twitter.com/1.1/lists/members.json?slug=members-of-congress&owner_screen_name=cspan&count=1000", auth=oauth)
+members = requests.get("https://api.twitter.com/1.1/lists/members.json?slug=members-of-congress&owner_screen_name=cspan&count=600", auth=oauth)
 result = json.loads(members.content)
 congressPeople = []
 for i in range(len(result['users'])):
     congressPeople.append(result['users'][i]['screen_name'])
-memberTweets = {}
-for member in congressPeople:
-    memberTweets[member] = json.loads(requests.get("https://api.twitter.com/1.1/search/tweets.json?q="+member+"&result_type=recent&count=100", auth=oauth).content)
+lastSection = congressPeople[180:]

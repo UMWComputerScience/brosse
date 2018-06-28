@@ -12,6 +12,7 @@ from collections import Counter
 from nltk.corpus import PlaintextCorpusReader
 import operator
 import random
+import string
 stopwords = set(stopwords.words('english'))
 corpus_root = '/Users/bryceanderson/Desktop/brosse/classifying'
 rapCorpus = PlaintextCorpusReader(corpus_root, ['rap1.txt', 'rap2.txt','rap3.txt','rap4.txt','rap5.txt'])
@@ -25,30 +26,30 @@ def update_stopwords(aset):
     return aset
 stopwords = update_stopwords(stopwords)
 #Make this more sexy
-def prettify(string):
-    string = string.replace(",","")
-    string = string.replace("'","")
-    string = string.replace("."," ")
-    string = string.replace("!"," ")
-    string = string.replace("?"," ")
-    string = string.replace('"',"")
-    string = string.replace(";","")
-    string = string.replace(":","")
-    string = string.replace("\n"," ")
-    string = string.replace("(","")
-    string = string.replace(")","")
-    string = string.replace("-","")
-    string = string.replace("`","")
-    string = string.replace('\'',"")
-    string = string.lower()
-    return string
+def prettify(strings):
+    strings = strings.replace(",","")
+    strings = strings.replace("'","")
+    strings = strings.replace("."," ")
+    strings = strings.replace("!"," ")
+    strings = strings.replace("?"," ")
+    strings = strings.replace('"',"")
+    strings = strings.replace(";","")
+    strings = strings.replace(":","")
+    strings = strings.replace("\n"," ")
+    strings = strings.replace("(","")
+    strings = strings.replace(")","")
+    strings = strings.replace("-","")
+    strings = strings.replace("`","")
+    strings = strings.replace('\'',"")
+    strings = strings.lower()
+    return strings
 #Pulls words form slected corpus and returns a list of the raw lyrics and Text object
 def getLyrics(Corpus):
     lyrics = []
     text = []
     for file in Corpus.fileids():
         temp = ""
-        temp += rapCorpus.raw(file)
+        temp += Corpus.raw(file)
         temp = prettify(temp)
         lyrics.append(temp)
         text.append(nltk.Text(temp.split(" ")))

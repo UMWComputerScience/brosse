@@ -15,7 +15,7 @@ import random
 stopwords = set(stopwords.words('english'))
 corpus_root = '/Users/bryceanderson/Desktop/brosse/classifying'
 rapCorpus = PlaintextCorpusReader(corpus_root, ['rap1.txt', 'rap2.txt','rap3.txt','rap4.txt','rap5.txt'])
-rockCorpus = PlaintextCorpusReader(corpus_root, ['rock1.txt', 'rock2.txt', 'rock3.txt', 'rock4.txt', 'rock5.txt'])
+rockCorpus = PlaintextCorpusReader(corpus_root, ['rock1.txt', 'rock2.txt', 'rock3.txt', 'rock4.txt', 'rock5.txt', 'rock6.txt', 'rock7.txt', 'rock8.txt'])
 def update_stopwords(aset):
     aset.add("'s")
     aset.add("n't")
@@ -42,9 +42,7 @@ def prettify(string):
     string = string.replace('\'',"")
     string = string.lower()
     return string
-
-#%%
-
+#Pulls words form slected corpus and returns a list of the raw lyrics and Text object
 def getLyrics(Corpus):
     lyrics = []
     text = []
@@ -55,13 +53,26 @@ def getLyrics(Corpus):
         lyrics.append(temp)
         text.append(nltk.Text(temp.split(" ")))
     return lyrics, text
+def portStem(listofStrings):
+    for i in range(len(listofStrings)):
+        temp = ""
+        for word in listofStrings[i].split(" "):
+            temp += port.stem(word) + " "
+        listofStrings[i] = temp
+    return listofStrings
+#%%
+lm = nltk.WordNetLemmatizer()
+port = nltk.PorterStemmer()
+lanc = nltk.LancasterStemmer()
 rapLyrics, rapText = getLyrics(rapCorpus)
 rockLyrics, rockText = getLyrics(rockCorpus)
+rapLyrics = portStem(rapLyrics)
+rockLyrics = portStem(rockLyrics)
 allWords = Counter(nltk.word_tokenize(" ".join(rapLyrics))) + Counter(nltk.word_tokenize(" ".join(rockLyrics)))
 sortVocab = sorted(allWords.items(), reverse=True, key=operator.itemgetter(1))
 words_features = list(sortVocab)[:100]
 
-# For every word in the features list check to see if it exist in the song label (True || False)w
+# For every word in the features list check to see if it exist in the song label (True || False)
 def song_features(text):
     words = set(text)
     features = {}
@@ -76,9 +87,9 @@ random.shuffle(featuresets)
 ntrain = int(len(featuresets) * .7)
 trainset, testset = featuresets[:ntrain], featuresets[ntrain:]
 rapOrRock = nltk.NaiveBayesClassifier.train(trainset)
-#rapOrRock.show_most_informative_features(20)
+rapOrRock.show_most_informative_features(10)
 probs = []
 for item in testset:
     probs.append("Rap: "+ str(rapOrRock.prob_classify(item[0]).prob('rap'))+ " Rock: " + str(rapOrRock.prob_classify(item[0]).prob('rock')))
-
+print(probs)
 

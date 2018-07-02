@@ -3,7 +3,7 @@ import json
 import sys
 
 filename = sys.argv[1]
-number = filename[-2:]
+number = filename[-8:-6]
 
 j_directory = '/data/Tweets/JSON/'
 t_directory = '/data/Tweets/CSV/Tweets/'
@@ -86,7 +86,8 @@ def tweet_to_lines(j):
 
 infile = open(j_directory+filename)
 for line in infile:
-    if line[0] == '{' and line[-1] == '}':
+    if line[0] == '{' and line[-2] == '}':
+        print('loading line', count)
         j = json.loads(line)
         tweet_to_lines(j)
 

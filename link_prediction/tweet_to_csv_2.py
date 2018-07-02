@@ -87,7 +87,6 @@ def tweet_to_lines(j):
 infile = open(j_directory+filename)
 for line in infile:
     if line[0] == '{' and line[-2] == '}':
-        print('loading line', count)
         j = json.loads(line)
         tweet_to_lines(j)
 

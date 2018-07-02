@@ -4,6 +4,6 @@ import subprocess
 directory = "/data/Tweets/JSON"
 
 for f in os.listdir(directory):
-    subprocess.run("nohup python3 tweet_to_csv_2.py " + f + " &")
+    subprocess.run("python3 tweet_to_csv_2.py " + f + " &")
 
 print('Processes started')

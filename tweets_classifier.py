@@ -5,10 +5,11 @@
 
 import nltk
 import operator
-from collections import Counter
 import random
 import sys
 import os
+import re
+import string
 
 PROPORTION_TRAINING = .7      # Proportion of set to train on
 NUM_FEATURES_TO_RETAIN = 200  # We'll use only this many most common words
@@ -27,13 +28,15 @@ def compile_texts(screenname):
             screenname))
     with open("{}.tweets".format(screenname),"r") as f:
         tweets = f.readlines()
-        texts = [ nltk.Text(nltk.word_tokenize(t.lower())) for t in tweets ]
-    return tweets, texts
+        texts = [ nltk.word_tokenize(
+            re.sub('['+string.punctuation+']','',t.lower())) for t in tweets ]
+    return texts
 
-tweets0, texts0 = compile_texts(screennames[0])
-tweets1, texts1 = compile_texts(screennames[1])
-all_vocab = Counter(nltk.word_tokenize(' '.join(tweets0))) + \
-            Counter(nltk.word_tokenize(' '.join(tweets1)))
+texts0 = compile_texts(screennames[0])
+texts1 = compile_texts(screennames[1])
+texts = texts0.copy()
+texts.extend(texts1)
+all_vocab = nltk.FreqDist([ word for text in texts for word in text ])
 sorted_words = sorted(all_vocab.items(), reverse=True, 
     key=operator.itemgetter(1))
 word_features = list(sorted_words)[:NUM_FEATURES_TO_RETAIN]
@@ -58,8 +61,8 @@ classifier.show_most_informative_features(NUM_MOST_INFO)
 
 tweet = input("\nEnter a sample tweet ('done' to quit): ")
 while tweet not in ["done","'done'"]:
-    probs = classifier.prob_classify(tweet_features(nltk.Text(
-        nltk.word_tokenize(tweet.lower()))))
+    probs = classifier.prob_classify(tweet_features(
+        nltk.word_tokenize(tweet.lower())))
     for sn in screennames:
         print("@{} probability: {:.3f}%".format(sn,100 * probs.prob(sn)))
     tweet = input("\nEnter a sample tweet: ")

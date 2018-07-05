@@ -11,7 +11,7 @@ To-Do:
     - set up skeleton code for database
     """
 import psycopg2
-
+import nltk
 conn = psycopg2.connect(host="", database="tweets", user="postgres") #Need database name and rest or params
 
 
@@ -29,4 +29,10 @@ def get_Tweets():
         for row in rows:
             cur.execute("Select Text from Tweets where userID=UserID limit 1 offset row-1")
             text += cur.fetchone()
-        
+        """Do text stuff"""
+    text = prettify(text)
+    text = noHandles(text)
+    text = noStopWords(text)
+    text = nltk.Text(nltk.word_tokenize(text))
+    textFeatures = getFeatures(text)
+    prob

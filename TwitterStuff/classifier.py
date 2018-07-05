@@ -50,7 +50,6 @@ def cleanup(Corpus):
         temp = prettify(temp)
         words.append(temp)
         text.append(nltk.Text(nltk.word_tokenize(temp)))
-    print(text[0])
     return words, text
 
 def portStem(listofStrings):
@@ -60,7 +59,20 @@ def portStem(listofStrings):
             temp += port.stem(word) + " "
         listofStrings[i] = temp
     return listofStrings
-
+def noHandles(string):
+    tm = ""
+    text = string
+    words = [word for word in text.split(" ") if "@" not in word]
+    for word in words:
+        tm += word + " "
+    return tm
+def noStopWords(string):
+    tm = ""
+    text = string
+    words = [word for word in text.split(" ") if word not in stopwords.words('english')]
+    for word in words:
+        tm += word + " "
+    return tm
 #%%
 corpus_root = "/Users/bryceanderson/Desktop/brosse/TwitterStuff"
 DemCorpus = PlaintextCorpusReader("./Democrat",".*\.txt")
@@ -68,9 +80,16 @@ RepCorpus = PlaintextCorpusReader("./Republican",".*\.txt")
 demWords, demText = cleanup(DemCorpus)
 repWords, repText = cleanup(RepCorpus)
 #%%
+for i in range(len(demWords)):
+    demWords[i] = noHandles(demWords[i])
+    demWords[i] = noStopWords(demWords[i])
+for i in range(len(repWords)):
+    repWords[i] = noHandles(repWords[i])
+    repWords[i] = noStopWords(repWords[i])
 demWords = portStem(demWords)
 repWords = portStem(repWords)
 totVocab = nltk.FreqDist(nltk.word_tokenize(" ".join(demWords))) + nltk.FreqDist(nltk.word_tokenize(" ".join(repWords)))
+
 #%%
 sortedVocab = sorted(totVocab.items(), reverse=True, key=operator.itemgetter(1))
 word_features = list(sortedVocab)[:int(len(totVocab)*.01)]
@@ -83,17 +102,18 @@ def getFeatures(text):
 featureset = [(getFeatures(t), 'D') for t in demText]
 featureset += [(getFeatures(t), 'R') for t in repText]
 random.shuffle(featureset)
-ntrain = int(len(featureset) * .7)
-trainset, testset = featureset[:ntrain], featureset[ntrain:]
-classifier = nltk.NaiveBayesClassifier.train(trainset)
-classifier.show_most_informative_features(5)
-#%%
-
+ntrain = int(len(featureset))
+trainset = featureset[:ntrain]
+k = 10
+subSize = int(len(trainset)/k)
 perc = []
 
-for i in range(100):
+for i in range(k):
     correct = 0
-    for item in testset:
+    test = trainset[i*subSize:][:subSize]
+    train = trainset[:i*subSize] + trainset[(i+1)*subSize:]
+    classifier = nltk.NaiveBayesClassifier.train(trainset)
+    for item in test:
         choice = ""
         probD = classifier.prob_classify(item[0]).prob('D')
         probR = classifier.prob_classify(item[0]).prob('R')
@@ -103,6 +123,6 @@ for i in range(100):
             choice = 'R'
         if choice == item[1]:
             correct+=1
-    perc.append(100*(correct/len(testset)))
-    print(str(i) + "...")
-print(sum(perc)/100)
+    perc.append((correct/len(test))*100)
+print(perc)
+classifier.show_most_informative_features(50)

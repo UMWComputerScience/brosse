@@ -32,10 +32,10 @@ def tweet_to_lines(j):
     TweetID = j['id_str']
     CreatedAt = j['created_at']
     UserID = j['user']['id_str']
-    Text = j['full_text']
+    Text = j['full_text'].replace('\n', '').replace(',', '')
     UserCreatedAt = j['user']['created_at']
     ScreenName = j['user']['screen_name']
-    Description = j['user']['description']
+    Description = j['user']['description'].replace('\n', '').replace(',', '')
     IsVerified = str(j['user']['verified'])
     FriendsCount = str(j['user']['friends_count'])
     FollowersCount = str(j['user']['followers_count'])
@@ -43,7 +43,7 @@ def tweet_to_lines(j):
     StatusesCount = str(j['user']['statuses_count'])
     Lang = j['user']['lang']
 
-    IsReply = 'in_reply_to_status_id_str' in j
+    IsReply = not j['in_reply_to_user_id_str'] is None
     IsRetweet = 'retweeted_status' in j
     IsQuote = 'quoted_status' in j
 

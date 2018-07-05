@@ -108,11 +108,12 @@ k = 10
 subSize = int(len(trainset)/k)
 perc = []
 
+# if len(trainset) = 500, k = 10, subSize = 50
 for i in range(k):
     correct = 0
     test = trainset[i*subSize:][:subSize]
     train = trainset[:i*subSize] + trainset[(i+1)*subSize:]
-    classifier = nltk.NaiveBayesClassifier.train(trainset)
+    classifier = nltk.NaiveBayesClassifier.train(train)
     for item in test:
         choice = ""
         probD = classifier.prob_classify(item[0]).prob('D')

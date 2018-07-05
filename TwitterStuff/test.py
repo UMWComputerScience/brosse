@@ -22,12 +22,12 @@ tracker = 0
 #Pulls tweets from congressperson in list congressPeople
 memberTweets = {}
 for member in congressPeople:
-    page = requests.get("https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name="+member.lower()+"&count=200&include_rts=false", auth=auuth)
+    page = requests.get("https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name="+member.lower()+"&count=200&include_rts=false&tweet_mode=extended", auth=auuth)
     fptweets = json.loads(page.content)
     if len(fptweets)==0:
         continue
     min_id = min([i['id'] for i in fptweets])
-    page = requests.get("https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name="+member.lower()+"&count=200&include_rts=false&max_id="+str(min_id-1), auth=auuth)
+    page = requests.get("https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name="+member.lower()+"&count=200&include_rts=false&tweet_mode=extended&max_id="+str(min_id-1), auth=auuth)
     sptweets = json.loads(page.content)
     fptweets.extend(sptweets)
     memberTweets[member] = fptweets
@@ -51,11 +51,11 @@ def updatetweets():
         elif Path(dempath+name+".txt").exists():
             with open(dempath+name+".txt", "w") as f:
                 for i in range(len(memberTweets[name])):
-                    f.write(memberTweets[name][i]['text'])
+                    f.write(memberTweets[name][i]['full_text'])
         elif Path(reppath+name+".txt").exists():
             with open(reppath+name+".txt", "w") as f:
                 for i in range(len(memberTweets[name])):
-                    f.write(memberTweets[name][i]['text'])
+                    f.write(memberTweets[name][i]['full_text'])
         else:
             print(name+ " not found in either folder.")
 updatetweets()

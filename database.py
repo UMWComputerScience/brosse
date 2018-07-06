@@ -18,12 +18,12 @@ conn = psycopg2.connect(dbname="brosse_test", user="banders6") #Need database na
 
 def create_Labels(): #<pass in a cursor maybe>
     user_cur = conn.cursor()
-    user_cur = user_cur.execute("Select userid from temp_sers")
+    user_cur = user_cur.execute("Select userid from temp_users")
     userID = user_cur.fetchone()
     """Loop through Users table collecting the User ID"""
     while userID is not None:
         tweet_cur = conn.cursor()
-        tweet_cur.execute("Select Text from Tweets where userid="+str(userID[0])+"")
+        tweet_cur.execute("Select Text from temp_tweets where userid="+str(userID[0])+"")
         rows = tweet_cur.fetchall()
         text = ""
         for row in rows:

@@ -45,3 +45,4 @@ def create_Labels(): #<pass in a cursor maybe>
 #    else:  #Rep > Dem
 #        result.execute("Update temp_users set party={}".format(Rep) + " where userid={}".format(userID))
 #Send Rep to table
+create_Labels()

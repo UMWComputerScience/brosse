@@ -11,38 +11,41 @@ To-Do:
     - set up skeleton code for database
 """
 import psycopg2
+from nltk.corpus import stopwords
 import nltk
-conn = psycopg2.connect(dbname="brosse_test", user="banders6") #Need database name and rest or params
-
-
+from bryce import *
+ #Need database name and rest or params
+nltk.download('stopwords')
+nltk.download('punkt')
 
 def create_Labels(): #<pass in a cursor maybe>
+    conn = psycopg2.connect(dbname="brosse_test", user="banders6")
     user_cur = conn.cursor()
-    user_cur = user_cur.execute("Select userid from temp_users")
-    userID = user_cur.fetchone()
+    user_cur.execute("Select userid from temp_users limit 10")
+    userID = user_cur.fetchall()
     """Loop through Users table collecting the User ID"""
-    while userID is not None:
+    for ID in userID:
+        print("For user {}".format(ID))
         tweet_cur = conn.cursor()
-        tweet_cur.execute("Select Text from temp_tweets where userid="+str(userID[0])+"")
+        tweet_cur.execute("Select text from temp_tweets where userid="+str(ID[0]))
         rows = tweet_cur.fetchall()
         text = ""
         for row in rows:
             text += row[0]
         """Do text stuff"""
-        print("For user {}".format(userID[0]) + ": " + text)
-        userID = user_cur.fetchone()
-#    text = prettify(text)                   #Make a module file for these methods
-#    text = noHandles(text)                                  #<----
-#    text = noStopWords(text)                                #<----
-#    text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
-#    textFeatures = getFeatures(text)                        #<----
-#    Dem = classifier.prob_classify(textFeatures).prob('D')
-#    Rep = classifier.prob_classify(textFeatures).prob('R')
-#    result = conn.cursor()
-#    if Dem > Rep:
-#         #Send Dem to table
-#        result.execute("Update temp_users set party={}".format(Dem) + " where userid={}".format(userID))
-#    else:  #Rep > Dem
-#        result.execute("Update temp_users set party={}".format(Rep) + " where userid={}".format(userID))
+        text = prettify(text) #Make a module file for these methods
+        text = noHandles(text)                               #<----
+        text = noStopWords(text)                                #<----
+        text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
+        print(text)
+    #textFeatures = getFeatures(text)                        #<----
+    #Dem = classifier.prob_classify(textFeatures).prob('D')
+    #Rep = classifier.prob_classify(textFeatures).prob('R')
+    #result = conn.cursor()
+    #if Dem > Rep:
+         #Send Dem to table
+     #   result.execute("Update temp_users set party={}".format(Dem) + " where userid={}".format(userID))
+    #else:  #Rep > Dem
+     #   result.execute("Update temp_users set party={}".format(Rep) + " where userid={}".format(userID))
 #Send Rep to table
 create_Labels()

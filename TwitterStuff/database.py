@@ -13,8 +13,8 @@ To-Do:
 import psycopg2
 from nltk.corpus import stopwords
 import nltk
-from bryce import * 
- #Need database name and rest or params
+from classifier import * 
+
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -37,8 +37,8 @@ def create_Labels(): #<pass in a cursor maybe>
         text = noHandles(text)                               #<----
         text = noStopWords(text)                                #<----
         text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
-        print(text)
-    #textFeatures = getFeatures(text)                        #<----
+        textFeatures = getFeatures(text)                        #<----
+        print(textFeatures)
     #Dem = classifier.prob_classify(textFeatures).prob('D')
     #Rep = classifier.prob_classify(textFeatures).prob('R')
     #result = conn.cursor()

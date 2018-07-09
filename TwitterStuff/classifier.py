@@ -8,13 +8,10 @@ Created on Fri Jun 22 16:19:57 2018
 
 import nltk
 from nltk.corpus import stopwords
-from collections import Counter
 from nltk.corpus import PlaintextCorpusReader
-from nltk.text import TextCollection
 import operator
 import random
-import sklearn
-import re
+import pandas
 #%% Functions
 port = nltk.PorterStemmer()
 def update_stopwords(aset):

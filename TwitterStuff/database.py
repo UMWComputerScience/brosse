@@ -13,7 +13,7 @@ To-Do:
 import psycopg2
 from nltk.corpus import stopwords
 import nltk
-from bryce import *
+from bryce import * 
  #Need database name and rest or params
 nltk.download('stopwords')
 nltk.download('punkt')

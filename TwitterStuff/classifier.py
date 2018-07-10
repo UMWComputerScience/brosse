@@ -74,21 +74,29 @@ def noStopWords(string):
 corpus_root = "/Users/bryceanderson/Desktop/brosse/TwitterStuff"
 DemCorpus = PlaintextCorpusReader("./Democrat",".*\.txt")
 RepCorpus = PlaintextCorpusReader("./Republican",".*\.txt")
+print("cleaning up dems...")
 demWords, demText = cleanup(DemCorpus)
+print("cleaning up reps...")
 repWords, repText = cleanup(RepCorpus)
 #%%
+print("getting dem words...")
 for i in range(len(demWords)):
     demWords[i] = noHandles(demWords[i])
     demWords[i] = noStopWords(demWords[i])
+print("getting rep words...")
 for i in range(len(repWords)):
     repWords[i] = noHandles(repWords[i])
     repWords[i] = noStopWords(repWords[i])
+print("stemming dems...")
 demWords = portStem(demWords)
+print("stemming reps...")
 repWords = portStem(repWords)
+print("building freqdist...")
 totVocab = nltk.FreqDist(nltk.word_tokenize(" ".join(demWords))) + nltk.FreqDist(nltk.word_tokenize(" ".join(repWords)))
 
 #%%
 sortedVocab = sorted(totVocab.items(), reverse=True, key=operator.itemgetter(1))
+print("building word features...")
 word_features = list(sortedVocab)[:int(len(totVocab)*.01)]
 def getFeatures(text):
     words = set(text)
@@ -107,6 +115,7 @@ perc = []
 
 # if len(trainset) = 500, k = 10, subSize = 50
 for i in range(k):
+    print("Testing slice " + str(i) + "...")
     correct = 0
     test = trainset[i*subSize:][:subSize]
     train = trainset[:i*subSize] + trainset[(i+1)*subSize:]

@@ -11,7 +11,6 @@ from nltk.corpus import stopwords
 from nltk.corpus import PlaintextCorpusReader
 import operator
 import random
-import pandas
 #%% Functions
 port = nltk.PorterStemmer()
 def update_stopwords(aset):
@@ -112,24 +111,24 @@ trainset = featureset[:ntrain]
 k = 10
 subSize = int(len(trainset)/k)
 perc = []
-
 # if len(trainset) = 500, k = 10, subSize = 50
-for i in range(k):
-    print("Testing slice " + str(i) + "...")
-    correct = 0
-    test = trainset[i*subSize:][:subSize]
-    train = trainset[:i*subSize] + trainset[(i+1)*subSize:]
-    classifier = nltk.NaiveBayesClassifier.train(train)
-    for item in test:
-        choice = ""
-        probD = classifier.prob_classify(item[0]).prob('D')
-        probR = classifier.prob_classify(item[0]).prob('R')
-        if probD > probR:
-            choice = 'D'
-        else:
-            choice = 'R'
-        if choice == item[1]:
-            correct+=1
-    perc.append((correct/len(test))*100)
+for j in range(10):
+    for i in range(k):
+        print("Testing slice " + str(i) + "...")
+        correct = 0
+        test = trainset[i*subSize:][:subSize]
+        train = trainset[:i*subSize] + trainset[(i+1)*subSize:]
+        classifier = nltk.NaiveBayesClassifier.train(train)
+        for item in test:
+            choice = ""
+            probD = classifier.prob_classify(item[0]).prob('D')
+            probR = classifier.prob_classify(item[0]).prob('R')
+            if probD > probR:
+                choice = 'D'
+            else:
+                choice = 'R'
+            if choice == item[1]:
+                correct+=1
+        perc.append((correct/len(test))*100)
 print(perc)
 classifier.show_most_informative_features(50)

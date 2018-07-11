@@ -13,7 +13,6 @@ from nltk.corpus import PlaintextCorpusReader
 from nltk.text import TextCollection
 import operator
 import random
-import sklearn
 import re
 #%% Functions
 port = nltk.PorterStemmer()
@@ -113,11 +112,11 @@ for i in range(k):
     correct = 0
     test = trainset[i*subSize:][:subSize]
     train = trainset[:i*subSize] + trainset[(i+1)*subSize:]
-    classifier = nltk.NaiveBayesClassifier.train(train)
+    classify = nltk.NaiveBayesClassifier.train(train)
     for item in test:
         choice = ""
-        probD = classifier.prob_classify(item[0]).prob('D')
-        probR = classifier.prob_classify(item[0]).prob('R')
+        probD = classify.prob_classify(item[0]).prob('D')
+        probR = classify.prob_classify(item[0]).prob('R')
         if probD > probR:
             choice = 'D'
         else:
@@ -125,5 +124,5 @@ for i in range(k):
         if choice == item[1]:
             correct+=1
     perc.append((correct/len(test))*100)
-print(perc)
-classifier.show_most_informative_features(50)
+#print(perc)
+#classify.show_most_informative_features(50)

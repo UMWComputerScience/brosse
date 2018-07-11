@@ -23,6 +23,8 @@ import classifier
 def create_Labels(corpus_root): #<pass in a cursor maybe>
     print("Building classifier...")
     classify = classifier.get_featureset(corpus_root)
+    #Actual classifier below. Use to get probability
+    DemorRep = nltk.NaiveBayesClassifier.train(classify)
     print("...built!")
     conn = psycopg2.connect(dbname="brosse_test", user="banders6")
     user_cur = conn.cursor()
@@ -48,15 +50,10 @@ def create_Labels(corpus_root): #<pass in a cursor maybe>
         text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
         print("Creating feature list for user...")
         textFeatures = classifier.getFeatures(text)                        #<----
-        Dem = classifier.classify.prob_classify(textFeatures).prob('D')
-        Rep = classifier.classify.prob_classify(textFeatures).prob('R')
-        print(">>>>Dem: "+ str(Dem)+ "<<<<\n>>>>Rep: "+ str(Rep) + "<<<<\n")
+        probability = DemorRep.prob_classify(textFeatures).prob('R')
+        probability = (probability * 2) - 1
+        print("PROB({}): ".format(ID[0]))
         result = conn.cursor()
-        if Dem > Rep:
-         #Send Dem to table
-            result.execute("Update temp_users set party={}".format(Dem) + " where userid="+str(userID[0]))
-        else:  #Rep > Dem
-            result.execute("Update temp_users set party={}".format(Rep) + " where userid="+str(userID[0]))
-        #Send Rep to table
+        result.execute("Update temp_users set party={}".format(probability) + " where userid=".format(ID[0]))
 
 create_Labels(".")

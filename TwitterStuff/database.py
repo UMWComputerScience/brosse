@@ -13,7 +13,7 @@ To-Do:
 import psycopg2
 from nltk.corpus import stopwords
 import nltk
-from classifier import * 
+import classifier 
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -33,19 +33,24 @@ def create_Labels(): #<pass in a cursor maybe>
         for row in rows:
             text += row[0]
         """Do text stuff"""
-        text = prettify(text) #Make a module file for these methods
-        text = noHandles(text)                               #<----
-        text = noStopWords(text)                                #<----
+        print("Prettifying...")
+        text = classifier.prettify(text) #Make a module file for these methods
+        print("De-Handlefying...")
+        text = classifier.noHandles(text)                               #<----
+        print("De-Stopwordifying...")
+        text = classifier.noStopWords(text)                                #<----
+        print("Creating FreqDist...")
         text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
-        textFeatures = getFeatures(text)                        #<----
-        print(textFeatures)
-    #Dem = classifier.prob_classify(textFeatures).prob('D')
-    #Rep = classifier.prob_classify(textFeatures).prob('R')
-    #result = conn.cursor()
-    #if Dem > Rep:
+        print("Creating feature list for user...")
+        textFeatures = classifier.getFeatures(text)                        #<----
+        Dem = classifier.classify.prob_classify(textFeatures).prob('D')
+        Rep = classifier.classify.prob_classify(textFeatures).prob('R')
+        print(">>>>Dem: "+ str(Dem)+ "<<<<\n>>>>Rep: "+ str(Rep) + "<<<<\n")
+        result = conn.cursor()
+        if Dem > Rep:
          #Send Dem to table
-     #   result.execute("Update temp_users set party={}".format(Dem) + " where userid={}".format(userID))
-    #else:  #Rep > Dem
-     #   result.execute("Update temp_users set party={}".format(Rep) + " where userid={}".format(userID))
-#Send Rep to table
+            result.execute("Update temp_users set party={}".format(Dem) + " where userid="+str(userID[0]))
+        else:  #Rep > Dem
+            result.execute("Update temp_users set party={}".format(Rep) + " where userid="+str(userID[0]))
+        #Send Rep to table
 create_Labels()

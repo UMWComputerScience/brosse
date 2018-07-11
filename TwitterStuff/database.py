@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+To run this, type:
+$ nohup ./database.py > database_output.txt &
 Created on Tue Jul  3 13:50:34 2018
 
 @author: bryceanderson
@@ -15,10 +17,13 @@ from nltk.corpus import stopwords
 import nltk
 import classifier 
 
-nltk.download('stopwords')
-nltk.download('punkt')
+#nltk.download('stopwords')
+#nltk.download('punkt')
 
-def create_Labels(): #<pass in a cursor maybe>
+def create_Labels(corpus_root): #<pass in a cursor maybe>
+    print("Building classifier...")
+    classify = classifier.get_featureset(corpus_root)
+    print("...built!")
     conn = psycopg2.connect(dbname="brosse_test", user="banders6")
     user_cur = conn.cursor()
     user_cur.execute("Select userid from temp_users limit 10")
@@ -53,4 +58,5 @@ def create_Labels(): #<pass in a cursor maybe>
         else:  #Rep > Dem
             result.execute("Update temp_users set party={}".format(Rep) + " where userid="+str(userID[0]))
         #Send Rep to table
-create_Labels()
+
+create_Labels(".")

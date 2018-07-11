@@ -8,12 +8,13 @@ Created on Fri Jun 22 16:19:57 2018
 
 import nltk
 from nltk.corpus import stopwords
-from collections import Counter
 from nltk.corpus import PlaintextCorpusReader
-from nltk.text import TextCollection
 import operator
 import random
+<<<<<<< HEAD
 import re
+=======
+>>>>>>> 0dbe2948d64a2c3bef82be15d284ed7954f1d48c
 #%% Functions
 port = nltk.PorterStemmer()
 def update_stopwords(aset):
@@ -76,21 +77,29 @@ def noStopWords(string):
 corpus_root = "/Users/bryceanderson/Desktop/brosse/TwitterStuff"
 DemCorpus = PlaintextCorpusReader("./Democrat",".*\.txt")
 RepCorpus = PlaintextCorpusReader("./Republican",".*\.txt")
+print("cleaning up dems...")
 demWords, demText = cleanup(DemCorpus)
+print("cleaning up reps...")
 repWords, repText = cleanup(RepCorpus)
 #%%
+print("getting dem words...")
 for i in range(len(demWords)):
     demWords[i] = noHandles(demWords[i])
     demWords[i] = noStopWords(demWords[i])
+print("getting rep words...")
 for i in range(len(repWords)):
     repWords[i] = noHandles(repWords[i])
     repWords[i] = noStopWords(repWords[i])
+print("stemming dems...")
 demWords = portStem(demWords)
+print("stemming reps...")
 repWords = portStem(repWords)
+print("building freqdist...")
 totVocab = nltk.FreqDist(nltk.word_tokenize(" ".join(demWords))) + nltk.FreqDist(nltk.word_tokenize(" ".join(repWords)))
 
 #%%
 sortedVocab = sorted(totVocab.items(), reverse=True, key=operator.itemgetter(1))
+print("building word features...")
 word_features = list(sortedVocab)[:int(len(totVocab)*.01)]
 def getFeatures(text):
     words = set(text)
@@ -106,8 +115,8 @@ trainset = featureset[:ntrain]
 k = 10
 subSize = int(len(trainset)/k)
 perc = []
-
 # if len(trainset) = 500, k = 10, subSize = 50
+<<<<<<< HEAD
 for i in range(k):
     correct = 0
     test = trainset[i*subSize:][:subSize]
@@ -126,3 +135,25 @@ for i in range(k):
     perc.append((correct/len(test))*100)
 #print(perc)
 #classify.show_most_informative_features(50)
+=======
+for j in range(10):
+    for i in range(k):
+        print("Testing slice " + str(i) + "...")
+        correct = 0
+        test = trainset[i*subSize:][:subSize]
+        train = trainset[:i*subSize] + trainset[(i+1)*subSize:]
+        classifier = nltk.NaiveBayesClassifier.train(train)
+        for item in test:
+            choice = ""
+            probD = classifier.prob_classify(item[0]).prob('D')
+            probR = classifier.prob_classify(item[0]).prob('R')
+            if probD > probR:
+                choice = 'D'
+            else:
+                choice = 'R'
+            if choice == item[1]:
+                correct+=1
+        perc.append((correct/len(test))*100)
+print(perc)
+classifier.show_most_informative_features(50)
+>>>>>>> 0dbe2948d64a2c3bef82be15d284ed7954f1d48c

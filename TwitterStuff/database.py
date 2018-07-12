@@ -49,11 +49,11 @@ def create_Labels(corpus_root): #<pass in a cursor maybe>
         print("Creating FreqDist...")
         text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
         print("Creating feature list for user...")
-        textFeatures = classifier.getFeatures(text)                        #<----
+        textFeatures = classifier.getFeatures(classify,text)                        #<----
         probability = DemorRep.prob_classify(textFeatures).prob('R')
         probability = (probability * 2) - 1
         print("PROB({}): ".format(ID[0]))
         result = conn.cursor()
-        result.execute("Update temp_users set party={}".format(probability) + " where userid=".format(ID[0]))
+        result.execute("Update temp_users set party={}".format(probability) + " where userid="+str(ID[0]))
 
 create_Labels(".")

@@ -112,7 +112,7 @@ def get_featureset(
     featureset = [(getFeatures(word_features, t), 'D') for t in demText]
     featureset += [(getFeatures(word_features, t), 'R') for t in repText]
 
-    return featureset
+    return word_features, featureset
 
 
 
@@ -134,8 +134,7 @@ def run_cv(featureset, k=10):
         for item in test:
             choice = ""
             probD = classify.prob_classify(item[0]).prob('D')
-            probR = classify.prob_classify(item[0]).prob('R')
-            if probD > probR:
+            if probD > .5:
                 choice = 'D'
             else:
                 choice = 'R'

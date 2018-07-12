@@ -22,7 +22,7 @@ import classifier
 
 def create_Labels(corpus_root): #<pass in a cursor maybe>
     print("Building classifier...")
-    classify = classifier.get_featureset(corpus_root)
+    word_features, classify = classifier.get_featureset(corpus_root)
     #Actual classifier below. Use to get probability
     DemorRep = nltk.NaiveBayesClassifier.train(classify)
     print("...built!")
@@ -49,7 +49,7 @@ def create_Labels(corpus_root): #<pass in a cursor maybe>
         print("Creating FreqDist...")
         text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
         print("Creating feature list for user...")
-        textFeatures = classifier.getFeatures(classify,text)                        #<----
+        textFeatures = classifier.getFeatures(word_features,text)                        #<----
         probability = DemorRep.prob_classify(textFeatures).prob('R')
         probability = (probability * 2) - 1
         print("PROB({}): ".format(ID[0]))

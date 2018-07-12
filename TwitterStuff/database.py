@@ -55,7 +55,7 @@ def create_Labels(corpus_root, word_features=None, classify=None):
         result = conn.cursor()
         result.execute("Update temp_users set party={}".format(probability) + " where userid="+str(ID[0]))
 
-
+#Bryce was here
 # insert pickle code here
 # to hydrate the word_features object and the featureset object from the
 # pickle file

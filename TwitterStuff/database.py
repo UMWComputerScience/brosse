@@ -20,9 +20,10 @@ import classifier
 #nltk.download('stopwords')
 #nltk.download('punkt')
 
-def create_Labels(corpus_root): #<pass in a cursor maybe>
+def create_Labels(corpus_root, word_features=None, classify=None):
     print("Building classifier...")
-    word_features, classify = classifier.get_featureset(corpus_root)
+    if not word_features:
+        word_features, classify = classifier.get_featureset(corpus_root)
     #Actual classifier below. Use to get probability
     DemorRep = nltk.NaiveBayesClassifier.train(classify)
     print("...built!")
@@ -56,4 +57,9 @@ def create_Labels(corpus_root): #<pass in a cursor maybe>
         result = conn.cursor()
         result.execute("Update temp_users set party={}".format(probability) + " where userid="+str(ID[0]))
 
-create_Labels(".")
+
+# insert pickle code here
+# to hydrate the word_features object and the featureset object from the
+# pickle file
+
+create_Labels(".", word_features, featureset)

@@ -16,9 +16,7 @@ import psycopg2
 from nltk.corpus import stopwords
 import nltk
 import classifier 
-
-#nltk.download('stopwords')
-#nltk.download('punkt')
+import pickle
 
 def create_Labels(corpus_root, word_features=None, classify=None):
     print("Building classifier...")
@@ -61,5 +59,8 @@ def create_Labels(corpus_root, word_features=None, classify=None):
 # insert pickle code here
 # to hydrate the word_features object and the featureset object from the
 # pickle file
-
+with open("wfeatures.pickle","r") as f:
+    word_features = pickle.load(f)
+with open("featureset.pickle", "r") as f:
+    featureset = pickle.load(f)
 create_Labels(".", word_features, featureset)

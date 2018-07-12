@@ -11,6 +11,7 @@ from nltk.corpus import stopwords
 from nltk.corpus import PlaintextCorpusReader
 import operator
 import random
+import pickle
 #%% Functions
 def update_stopwords(aset):
     aset.add("'s")
@@ -111,7 +112,10 @@ def get_featureset(
     word_features = list(sortedVocab)[:int(len(totVocab)*.01)]
     featureset = [(getFeatures(word_features, t), 'D') for t in demText]
     featureset += [(getFeatures(word_features, t), 'R') for t in repText]
-
+    with open("./featureset.pickle", "wb") as f:
+        pickle.dump(featureset, f)
+    with open("./wfeatures.pickle", "wb") as f:
+        pickle.dump(word_features, f)
     return word_features, featureset
 
 

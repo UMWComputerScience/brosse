@@ -27,7 +27,7 @@ def create_Labels(corpus_root, word_features=None, classify=None):
     print("...built!")
     conn = psycopg2.connect(dbname="brosse_test", user="banders6")
     user_cur = conn.cursor()
-    user_cur.execute("Select userid from temp_users limit 10")
+    user_cur.execute("Select userid from temp_users limit 100")
     userID = user_cur.fetchall()
     """Loop through Users table collecting the User ID"""
     for ID in userID:
@@ -54,7 +54,10 @@ def create_Labels(corpus_root, word_features=None, classify=None):
         print("PROB({}): ".format(ID[0]))
         result = conn.cursor()
         result.execute("Update temp_users set party={}".format(probability) + " where userid="+str(ID[0]))
-
+        label = conn.cursor()
+        label.execute("Select party from temp_users where userid="+str(ID[0]))
+        party = label.fetchone()
+        print(str(party) + "sent to "+ str(ID[0]))
 # insert pickle code here
 # to hydrate the word_features object and the featureset object from the
 # pickle file

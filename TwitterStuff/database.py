@@ -27,14 +27,15 @@ def create_Labels(corpus_root, word_features=None, classify=None):
     print("...built!")
     conn = psycopg2.connect(dbname="brosse_test", user="banders6")
     user_cur = conn.cursor()
-    user_cur.execute("Select userid from temp_users limit 100")
+    user_cur.execute("Select userid from temp_users limit 1000")
     userID = user_cur.fetchall()
     """Loop through Users table collecting the User ID"""
     for ID in userID:
         print("For user {}".format(ID))
         tweet_cur = conn.cursor()
         tweet_cur.execute("Select text from temp_tweets where userid="+str(ID[0]))
-        rows = tweet_cur.fetchall()
+        rows = tweet_cur.fetchall() 
+        print("Cursor fetched: " + str(len(rows))+ "tweets")
         text = ""
         for row in rows:
             text += row[0]
@@ -48,9 +49,9 @@ def create_Labels(corpus_root, word_features=None, classify=None):
         print("Creating FreqDist...")
         text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
         print("Creating feature list for user...")
-        textFeatures = classifier.getFeatures(word_features,text)                        #<----
+        textFeatures = classifier.getFeatures(word_features,text)         #<----
         probability = DemorRep.prob_classify(textFeatures).prob('R')
-        probability = (probability * 2) - 1
+        probability = float((probability * 2) - 1)
         print("PROB({}): ".format(ID[0]))
         result = conn.cursor()
         result.execute("Update temp_users set party={}".format(probability) + " where userid="+str(ID[0]))

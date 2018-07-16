@@ -27,7 +27,7 @@ def create_Labels(corpus_root, word_features=None, classify=None):
     print("...built!")
     conn = psycopg2.connect(dbname="brosse_test", user="banders6")
     user_cur = conn.cursor()
-    user_cur.execute("Select userid from temp_users limit 1000")
+    user_cur.execute("Select userid from temp_users limit 10")
     userID = user_cur.fetchall()
     """Loop through Users table collecting the User ID"""
     for ID in userID:
@@ -66,4 +66,6 @@ with open("wfeatures.pickle","rb") as f:
     word_features = pickle.load(f)
 with open("featureset.pickle", "rb") as f:
     featureset = pickle.load(f)
+print(word_features)
+print(featureset)
 create_Labels(".", word_features, featureset)

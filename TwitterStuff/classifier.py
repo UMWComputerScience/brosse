@@ -12,6 +12,8 @@ from nltk.corpus import PlaintextCorpusReader
 import operator
 import random
 import pickle
+import re
+
 #%% Functions
 def update_stopwords(aset):
     aset.add("'s")
@@ -20,23 +22,21 @@ def update_stopwords(aset):
     aset.add("dont")
     aset.add("im")
     return aset
+
+
 def prettify(strings):
-    strings = strings.replace(",","")
-    strings = strings.replace("'","")
-    strings = strings.replace("."," ")
-    strings = strings.replace("!"," ")
-    strings = strings.replace("?"," ")
-    strings = strings.replace('"',"")
-    strings = strings.replace(";","")
-    strings = strings.replace(":","")
-    strings = strings.replace("\n"," ")
-    strings = strings.replace("(","")
-    strings = strings.replace(")","")
-    strings = strings.replace("`","")
-    strings = strings.replace('\'',"")
-    strings = strings.replace("/", "")
-    strings = strings.lower()
-    return strings
+
+    # Get rid of entity ampersands
+    strings = strings.replace("&amp;", "")
+
+    # Get rid of weird yet content-less characters
+    strings = re.sub(r"[’$%&*+-=\[\]-—‘“”…,'.!?;:()`/]","",strings)
+
+    # Get rid of one-letter words
+    strings = re.sub(r"\b\w\b","",strings)  
+
+    return strings.lower()
+
 
 def cleanup(Corpus):
     words = []
@@ -48,6 +48,33 @@ def cleanup(Corpus):
         text.append(nltk.Text(nltk.word_tokenize(temp)))
     return words, text
 
+
+# Return a dictionary giving a list of stems for each fileid in the corpus.
+def get_stems_dict(Corpus, stem=True):
+    stems = {}
+    for file in Corpus.fileids():
+        temp = Corpus.raw(file)
+
+        # Get rid of all Twitter handles (but do we want these?)
+        temp = re.sub("@\w*","",temp)
+
+        # Get rid of all hyperlinks
+        temp = re.sub(r"\bhttps?[:.\w/]*\b","",temp)
+
+        temp = prettify(temp)
+
+        temp = re.sub(r"\b(" + "|".join(stopwords.words('english')) + r")\b",
+            "", temp)
+
+        port = nltk.PorterStemmer()
+        if stem:
+            stems[file] = [ 
+                port.stem(w) for w in nltk.word_tokenize(temp) 
+                if '#' not in w ]
+        else:
+            stems[file] = [ w for w in nltk.word_tokenize(temp) ]
+    return stems
+
 def portStem(listofStrings):
     port = nltk.PorterStemmer()
     for i in range(len(listofStrings)):
@@ -56,6 +83,7 @@ def portStem(listofStrings):
             temp += port.stem(word) + " "
         listofStrings[i] = temp
     return listofStrings
+
 def noHandles(string):
     tm = ""
     text = string

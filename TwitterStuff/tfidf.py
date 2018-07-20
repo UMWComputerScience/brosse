@@ -12,13 +12,13 @@ import pandas as pd
 import os.path
 from nltk.classify import SklearnClassifier
 from sklearn.svm import SVC
-
+import random
 # Given the location of a Democrat/Republican corpus, return a list of tuples,
 # each of which is (0) a Series of features (whose keys are stems, and whose
 # values are TF/IDF values) and (1) the class label.
 def get_tfidf_featureset(
     corpus_root="/Users/bryceanderson/Desktop/brosse/TwitterStuff",
-    idf_range=(.2,.6), rebuild=False):
+    idf_range=(.3,.6), rebuild=False):
 
     if not rebuild and os.path.isfile("tfidf.pickle"):
         print("* Returning pickled feature set *")
@@ -78,14 +78,35 @@ def classify_manual(the_classifier, manual_text):
     print("P(R): {:.2f}".format(probability))
     return probability
 
+def run_cv(featureset, k=100):
+    random.shuffle(featureset)
+    ntrain = int(len(featureset))
+    trainset = featureset[:ntrain]
+    subSize = int(len(trainset)/k)
+    perc = []
+    for i in range(k):
+        print("Testing slice " + str(i) + "...")
+        correct = 0
+        test = trainset[i*subSize:][:subSize]
+        train = trainset[:i*subSize] + trainset[(i+1)*subSize:]
+        the_classifier = SklearnClassifier(SVC(probability=True), sparse=False).train(train)
+        for item in test:
+            choice = ""
+            probD = the_classifier.prob_classify(item[0]).prob('R')
+            if probD > .5:
+                choice = 'R'
+            else:
+                choice = 'D'
+            if choice == item[1]:
+                correct+=1
+        perc.append((correct/len(test))*100)
+    return perc
 
 print("Building classifier...")
-featureset, idfs = get_tfidf_featureset(".",rebuild=False)
-
+featureset, idfs = get_tfidf_featureset(".",rebuild=True)
 nonpandas_fs = [ (s.to_dict(), l) for s,l in featureset ]
-print("Training classifier...")
-
-the_classifier = SklearnClassifier(SVC(probability=True), sparse=False).train(nonpandas_fs)
+print("Running Cross Validation...")
+accs = run_cv(nonpandas_fs)
 print("...done!")
 
 text = input("Enter text (or name of file in 'quotes'): ")

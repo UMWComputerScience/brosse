@@ -30,7 +30,9 @@ def prettify(strings):
     strings = strings.replace("&amp;", "")
 
     # Get rid of weird yet content-less characters
-    strings = re.sub(r"[’$%&*+-=\[\]-—‘“”…,'.!?;:()`/]","",strings)
+    strings = re.sub(r"[’$%&*+-={}-—‘“”…,.'!?;:()`/]","",strings)
+    strings = re.sub(r"\[","",strings)
+    strings = re.sub(r"\]","",strings)
 
     # Get rid of one-letter words
     strings = re.sub(r"\b\w\b","",strings)  
@@ -49,31 +51,35 @@ def cleanup(Corpus):
     return words, text
 
 
+# Return a list of stems for the (single) text passed.
+def get_stems(text, stem=True):
+
+    # Get rid of all Twitter handles (but do we want these?)
+    text = re.sub("@\w*","",text)
+
+    # Get rid of all hyperlinks
+    text = re.sub(r"\bhttps?[:.\w/]*\b","",text)
+
+    text = prettify(text)
+
+    text = re.sub(r"\b(" + "|".join(stopwords.words('english')) + r")\b",
+        "", text)
+
+    port = nltk.PorterStemmer()
+    if stem:
+        return [ port.stem(w) for w in nltk.word_tokenize(text) 
+            if '#' not in w ]
+    else:
+        return [ w for w in nltk.word_tokenize(text) ]
+
+
 # Return a dictionary giving a list of stems for each fileid in the corpus.
 def get_stems_dict(Corpus, stem=True):
     stems = {}
     for file in Corpus.fileids():
-        temp = Corpus.raw(file)
-
-        # Get rid of all Twitter handles (but do we want these?)
-        temp = re.sub("@\w*","",temp)
-
-        # Get rid of all hyperlinks
-        temp = re.sub(r"\bhttps?[:.\w/]*\b","",temp)
-
-        temp = prettify(temp)
-
-        temp = re.sub(r"\b(" + "|".join(stopwords.words('english')) + r")\b",
-            "", temp)
-
-        port = nltk.PorterStemmer()
-        if stem:
-            stems[file] = [ 
-                port.stem(w) for w in nltk.word_tokenize(temp) 
-                if '#' not in w ]
-        else:
-            stems[file] = [ w for w in nltk.word_tokenize(temp) ]
+        stems[file] = get_stems(Corpus.raw(file), stem)
     return stems
+
 
 def portStem(listofStrings):
     port = nltk.PorterStemmer()

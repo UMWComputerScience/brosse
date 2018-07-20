@@ -18,7 +18,7 @@ import random
 # values are TF/IDF values) and (1) the class label.
 def get_tfidf_featureset(
     corpus_root="/Users/bryceanderson/Desktop/brosse/TwitterStuff",
-    idf_range=(.3,.6), rebuild=False):
+    idf_range=(.3,.7), rebuild=False):
 
     if not rebuild and os.path.isfile("tfidf.pickle"):
         print("* Returning pickled feature set *")
@@ -92,8 +92,9 @@ def run_cv(featureset, k=100):
         the_classifier = SklearnClassifier(SVC(probability=True), sparse=False).train(train)
         for item in test:
             choice = ""
-            probD = the_classifier.prob_classify(item[0]).prob('R')
-            if probD > .5:
+            probR = the_classifier.prob_classify(item[0]).prob('R')
+            probD = the_classifier.prob_classify(item[0]).prob('D')
+            if probR > probD:
                 choice = 'R'
             else:
                 choice = 'D'
@@ -102,13 +103,17 @@ def run_cv(featureset, k=100):
         perc.append((correct/len(test))*100)
     return perc
 
+def plots(percs):
+    percs = pd.Series(percs)
+    percs.plot(kind='hist', bins=15, title='100-fold Cross Validation', xlim=(0,100), figsize=(20,20))
+    print(sum(percs)/len(percs))
 print("Building classifier...")
 featureset, idfs = get_tfidf_featureset(".",rebuild=True)
 nonpandas_fs = [ (s.to_dict(), l) for s,l in featureset ]
 print("Running Cross Validation...")
 accs = run_cv(nonpandas_fs)
 print("...done!")
-
+plots(accs)
 text = input("Enter text (or name of file in 'quotes'): ")
 while text != 'done':
     if text[0] == "'" and text[-1] == "'":

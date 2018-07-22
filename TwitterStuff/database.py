@@ -14,42 +14,48 @@ To-Do:
 """
 import psycopg2
 from nltk.corpus import stopwords
-import nltk
-import classifier 
+import nltk 
 import pickle
-
+from nltk.classify import SklearnClassifier
+from sklearn.svm import SVC
+import classifier
+import tfidf
 def create_Labels(corpus_root, word_features=None, classify=None):
     print("Building classifier...")
-    if not word_features:
-        word_features, classify = classifier.get_featureset(corpus_root)
-    #Actual classifier below. Use to get probability
-    DemorRep = nltk.NaiveBayesClassifier.train(classify)
+    featureset, idfs = tfidf.get_tfidf_featureset(".")
+    
+    #Classifier below
+    DemorRep = SklearnClassifier(SVC(probability=True), sparse=False)
     print("...built!")
-    conn = psycopg2.connect(dbname="brosse_test", user="banders6")
+
+    conn = psycopg2.connect(dbname="brosse", user="banders6")
     user_cur = conn.cursor()
-    user_cur.execute("Select userid from temp_users limit 10")
+    user_cur.execute("Select userid from users limit 10")
     userID = user_cur.fetchall()
-    """Loop through Users table collecting the User ID"""
+    #Loops through Users table collecting the User ID
+
     for ID in userID:
-        print("For user {}".format(ID))
+        print("For user {}: \n".format(ID[0]))
         tweet_cur = conn.cursor()
-        tweet_cur.execute("Select text from temp_tweets where userid="+str(ID[0]))
+        tweet_cur.execute("Select text from tweets where userid="+str(ID[0]))
         rows = tweet_cur.fetchall() 
         print("Cursor fetched: " + str(len(rows))+ "tweets")
         text = ""
         for row in rows:
             text += row[0]
-        """Do text stuff"""
-        print("Prettifying...")
-        text = classifier.prettify(text) #Make a module file for these methods
+        probability = tfidf.classify_manual(DemorRep, text)
+        print(probability)
+        """print("Prettifying...")
+        text = classifier.prettify(text)
         print("De-Handlefying...")
-        text = classifier.noHandles(text)                               #<----
+        text = classifier.noHandles(text)
         print("De-Stopwordifying...")
-        text = classifier.noStopWords(text)                                #<----
+        text = classifier.noStopWords(text)
         print("Creating FreqDist...")
-        text = sorted(nltk.FreqDist(nltk.Text(nltk.word_tokenize(text))))
+        text = nltk.Text(nltk.word_tokenize(text))
         print("Creating feature list for user...")
-        textFeatures = classifier.getFeatures(word_features,text)         #<----
+        textFeatures = classifier.getFeatures(word_features,text)
+        print(textFeatures)
         probability = DemorRep.prob_classify(textFeatures).prob('R')
         probability = float((probability * 2) - 1)
         print("PROB({}): ".format(ID[0]))
@@ -58,14 +64,11 @@ def create_Labels(corpus_root, word_features=None, classify=None):
         label = conn.cursor()
         label.execute("Select party from temp_users where userid="+str(ID[0]))
         party = label.fetchone()
-        print(str(party) + "sent to "+ str(ID[0]))
-# insert pickle code here
-# to hydrate the word_features object and the featureset object from the
-# pickle file
-with open("wfeatures.pickle","rb") as f:
-    word_features = pickle.load(f)
-with open("featureset.pickle", "rb") as f:
-    featureset = pickle.load(f)
-print(word_features)
-print(featureset)
-create_Labels(".", word_features, featureset)
+        print(str(party) + "sent to "+ str(ID[0]))"""
+
+
+rn = input("Do you want to run this program?(y/n): ")
+if rn=='y':
+    create_Labels(".")
+else:
+    print("Program Terminated...")

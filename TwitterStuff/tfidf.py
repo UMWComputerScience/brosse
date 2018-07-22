@@ -111,9 +111,10 @@ def plots(percs):
     percs.plot(kind='hist', bins=15, title='100-fold Cross Validation', xlim=(0,100), figsize=(20,20))
     print(sum(percs)/len(percs))
 print("Building classifier...")
-featureset, idfs = get_tfidf_featureset(".",rebuild=True)
+featureset, idfs = get_tfidf_featureset(".",rebuild=False)
 nonpandas_fs = [ (s.to_dict(), l) for s,l in featureset ]
 cv = input("Do you want to run Cross Validation?(y/n): ")
+
 if cv == "y" or cv == "Y":
     print("Running Cross Validation...")
     accs = run_cv(nonpandas_fs)

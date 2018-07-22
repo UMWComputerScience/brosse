@@ -119,7 +119,7 @@ if cv == "y" or cv == "Y":
     accs = run_cv(nonpandas_fs)
     plots(accs)
     
-the_classifier = SklearnClassifier(SVC(probability=False), sparse=False).train(nonpandas_fs)
+the_classifier = SklearnClassifier(SVC(probability=True), sparse=False).train(nonpandas_fs)
 
 print("...done!")
 text = input("Enter text (or name of file in 'quotes'): ")

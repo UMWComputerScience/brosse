@@ -31,6 +31,7 @@ def create_Labels(corpus_root, word_features=None, classify=None):
     #Change limit value to 0 for whole table
     #limit = int(input("How many users would you like to label? (Enter 0 for whole table): "))
     conn = psycopg2.connect(dbname="brosse", user="banders6")
+    conn.autocommit = True
     user_cur = conn.cursor()
     count = 0
     print("Fetching userids...")

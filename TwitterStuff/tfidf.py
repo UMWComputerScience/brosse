@@ -18,7 +18,7 @@ import random
 # values are TF/IDF values) and (1) the class label.
 def get_tfidf_featureset(
     corpus_root="/Users/bryceanderson/Desktop/brosse/TwitterStuff",
-    idf_range=(.3,.7), rebuild=False):
+    idf_range=(.2,.3), rebuild=False):
 
     if not rebuild and os.path.isfile("tfidf.pickle"):
         print("* Returning pickled feature set *")
@@ -44,7 +44,10 @@ def get_tfidf_featureset(
         sum([ stem in stem_list for _,stem_list in stemSets.items() ]) 
         for stem in listOfAllStems }) / len(FullCorpus.fileids())
     idfs = idfs[idfs.between(*idf_range)]
-
+    print(len(idfs))
+    idfs.sort_values(ascending=False, inplace=True)
+    idfspoints = idfs[0:100]
+    idfspoints.plot(kind='bar', figsize=(30,30), fontsize=28)
     print("computing TFs...")
     featureset = []
     for demStemDict in demStems.values():
@@ -89,7 +92,7 @@ def run_cv(featureset, k=100):
         correct = 0
         test = trainset[i*subSize:][:subSize]
         train = trainset[:i*subSize] + trainset[(i+1)*subSize:]
-        the_classifier = SklearnClassifier(SVC(probability=True), sparse=False).train(train)
+        the_classifier = SklearnClassifier(SVC(probability=False), sparse=False).train(train)
         for item in test:
             choice = ""
             probR = the_classifier.prob_classify(item[0]).prob('R')
@@ -108,12 +111,15 @@ def plots(percs):
     percs.plot(kind='hist', bins=15, title='100-fold Cross Validation', xlim=(0,100), figsize=(20,20))
     print(sum(percs)/len(percs))
 print("Building classifier...")
-featureset, idfs = get_tfidf_featureset(".",rebuild=True)
+featureset, idfs = get_tfidf_featureset(".",rebuild=False)
 nonpandas_fs = [ (s.to_dict(), l) for s,l in featureset ]
-print("Running Cross Validation...")
-accs = run_cv(nonpandas_fs)
+cv = input("Do you want to run Cross Validation?(y/n): ")
+if cv == "y" or cv == "Y":
+    print("Running Cross Validation...")
+    accs = run_cv(nonpandas_fs)
+    plots(accs)
 print("...done!")
-plots(accs)
+
 text = input("Enter text (or name of file in 'quotes'): ")
 while text != 'done':
     if text[0] == "'" and text[-1] == "'":

@@ -76,7 +76,6 @@ def compute_tfidf(stemDict, idfs):
 def classify_manual(the_classifier, manual_text):
 
     this_tfidf = compute_tfidf(classifier.get_stems(manual_text), idfs)
-
     probability = the_classifier.prob_classify(this_tfidf).prob('R')
     print("P(R): {:.2f}".format(probability))
     return probability
@@ -113,20 +112,20 @@ def plots(percs):
 print("Building classifier...")
 featureset, idfs = get_tfidf_featureset(".",rebuild=False)
 nonpandas_fs = [ (s.to_dict(), l) for s,l in featureset ]
-cv = input("Do you want to run Cross Validation?(y/n): ")
+#cv = input("Do you want to run Cross Validation?(y/n): ")
 
-if cv == "y" or cv == "Y":
-    print("Running Cross Validation...")
-    accs = run_cv(nonpandas_fs)
-    plots(accs)
+#if cv == "y" or cv == "Y":
+ #   print("Running Cross Validation...")
+  #  accs = run_cv(nonpandas_fs)
+   # plots(accs)
     
 the_classifier = SklearnClassifier(SVC(probability=True), sparse=False).train(nonpandas_fs)
 
 print("...done!")
-text = input("Enter text (or name of file in 'quotes'): ")
-while text != 'done':
-    if text[0] == "'" and text[-1] == "'":
-        f = open(text[1:-1],"r")
-        text = f.read()
-    classify_manual(the_classifier, text)
-    text = input("Enter text ('done' to quit): ")
+#text = input("Enter text (or name of file in 'quotes'): ")
+#while text != 'done':
+ #   if text[0] == "'" and text[-1] == "'":
+  #      f = open(text[1:-1],"r")
+   #     text = f.read()
+    #classify_manual(the_classifier, text)
+    #text = input("Enter text ('done' to quit): ")
